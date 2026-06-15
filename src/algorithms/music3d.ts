@@ -16,9 +16,10 @@ export class MUSIC3DEngine {
     this.spectrumData = new Float32Array(this.resolution ** 3);
   }
 
-  computeSpectrum(tdoaMatrix: number[][], amplitudes: number[]): Float32Array {
+  computeSpectrum(tdoaMatrix: number[][], amplitudes: number[], targetBuffer?: Float32Array): Float32Array {
     const M = this.sensorPositions.length;
     const K = this.signalSourceCount;
+    const outBuffer = targetBuffer ?? this.spectrumData;
 
     const covMatrix = this.buildCovarianceMatrix(tdoaMatrix, amplitudes, M);
 
@@ -59,19 +60,19 @@ export class MUSIC3DEngine {
           const denom = aH.mmul(UnUnH).mmul(a);
           const val = 1.0 / Math.max(denom.get(0, 0), 1e-10);
 
-          this.spectrumData[iz * N * N + iy * N + ix] = val;
+          outBuffer[iz * N * N + iy * N + ix] = val;
           if (val > maxVal) maxVal = val;
         }
       }
     }
 
     if (maxVal > 0) {
-      for (let i = 0; i < this.spectrumData.length; i++) {
-        this.spectrumData[i] /= maxVal;
+      for (let i = 0; i < outBuffer.length; i++) {
+        outBuffer[i] /= maxVal;
       }
     }
 
-    return this.spectrumData;
+    return outBuffer;
   }
 
   private buildCovarianceMatrix(tdoaMatrix: number[][], amplitudes: number[], M: number): Matrix {
@@ -107,5 +108,9 @@ export class MUSIC3DEngine {
 
   getResolution(): number {
     return this.resolution;
+  }
+
+  getBufferSize(): number {
+    return this.resolution ** 3;
   }
 }

@@ -14,7 +14,7 @@ export default function Home() {
   const sensorConfig = useStore((s) => s.sensorConfig);
   const algorithmConfig = useStore((s) => s.algorithmConfig);
 
-  const { spectrumData, resolution, isComputing } = useMUSIC(
+  const { spectrumData, resolution, isComputing, spectrumVersion } = useMUSIC(
     pulseFrame,
     sensorConfig,
     algorithmConfig,
@@ -25,6 +25,7 @@ export default function Home() {
   const setChannelStatus = useStore((s) => s.setChannelStatus);
   const setSpectrumData = useStore((s) => s.setSpectrumData);
   const setSpectrumResolution = useStore((s) => s.setSpectrumResolution);
+  const setSpectrumVersion = useStore((s) => s.setSpectrumVersion);
   const setIsComputing = useStore((s) => s.setIsComputing);
   const setWsConnected = useStore((s) => s.setWsConnected);
   const wsConnected = useStore((s) => s.wsConnected);
@@ -34,6 +35,7 @@ export default function Home() {
   useEffect(() => { setChannelStatus(channelStatus); }, [channelStatus, setChannelStatus]);
   useEffect(() => { setSpectrumData(spectrumData); }, [spectrumData, setSpectrumData]);
   useEffect(() => { setSpectrumResolution(resolution); }, [resolution, setSpectrumResolution]);
+  useEffect(() => { setSpectrumVersion(spectrumVersion); }, [spectrumVersion, setSpectrumVersion]);
   useEffect(() => { setIsComputing(isComputing); }, [isComputing, setIsComputing]);
 
   useEffect(() => {

@@ -10,6 +10,7 @@ import { useStore } from '@/store/useStore';
 export default function Scene3D() {
   const spectrumData = useStore((s) => s.spectrumData);
   const resolution = useStore((s) => s.spectrumResolution);
+  const spectrumVersion = useStore((s) => s.spectrumVersion);
   const intensity = useStore((s) => s.intensity);
   const sensorConfig = useStore((s) => s.sensorConfig);
   const latestFrame = useStore((s) => s.latestFrame);
@@ -36,6 +37,7 @@ export default function Scene3D() {
             spectrumData={spectrumData}
             resolution={resolution}
             intensity={intensity}
+            spectrumVersion={spectrumVersion}
           />
         )}
 
