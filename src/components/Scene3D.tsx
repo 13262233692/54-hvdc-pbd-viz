@@ -1,11 +1,13 @@
-import { Suspense } from 'react';
+import { Suspense, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import VolumeRenderer from './VolumeRenderer';
 import TransformerShell from './TransformerShell';
 import SensorNodes from './SensorNodes';
+import IsosurfaceMesh from './IsosurfaceMesh';
 import { useStore } from '@/store/useStore';
+import { useIsosurface } from '@/hooks/useIsosurface';
 
 export default function Scene3D() {
   const spectrumData = useStore((s) => s.spectrumData);
@@ -14,6 +16,20 @@ export default function Scene3D() {
   const intensity = useStore((s) => s.intensity);
   const sensorConfig = useStore((s) => s.sensorConfig);
   const latestFrame = useStore((s) => s.latestFrame);
+
+  const bounds = useMemo(() => ({
+    minX: -2.5, maxX: 2.5,
+    minY: -2.5, maxY: 2.5,
+    minZ: -2.5, maxZ: 2.5,
+  }), []);
+
+  const isosurface = useIsosurface(
+    spectrumData,
+    resolution,
+    0.72,
+    bounds,
+    spectrumVersion,
+  );
 
   const signalStrengths = sensorConfig.map((_, idx) => {
     if (!latestFrame) return 0;
@@ -38,6 +54,14 @@ export default function Scene3D() {
             resolution={resolution}
             intensity={intensity}
             spectrumVersion={spectrumVersion}
+          />
+        )}
+
+        {isosurface.hasResult && isosurface.triangleCount > 0 && (
+          <IsosurfaceMesh
+            vertices={isosurface.vertices}
+            normals={isosurface.normals}
+            triangleCount={isosurface.triangleCount}
           />
         )}
 
